@@ -1,0 +1,45 @@
+def to_twos_complement_8bit(val):
+    """Converts an integer to its 8-bit 2's complement binary string representation."""
+    # Restrict value to 8-bit signed integer range [-128, 127]
+    val_masked = val & 0xFF
+    return f"{val_masked:08b}"
+
+def binary_add_8bit(op1_dec, op2_dec):
+    """Simulates 8-bit binary addition and checks for arithmetic overflow."""
+    # Convert operands to binary strings
+    bin_op1 = to_twos_complement_8bit(op1_dec)
+    bin_op2 = to_twos_complement_8bit(op2_dec)
+    
+    # Perform arithmetic addition and mask to 8 bits
+    res_raw = op1_dec + op2_dec
+    res_masked = res_raw & 0xFF
+    bin_res = f"{res_masked:08b}"
+    
+    # Convert back to signed decimal from 8-bit 2's complement
+    if res_masked & 0x80:  # If sign bit (MSB) is 1, it's negative
+        res_dec = res_masked - 256
+    else:
+        res_dec = res_masked
+        
+    # Check for overflow: 
+    # Overflow occurs if adding two numbers of the same sign produces a result with a different sign
+    sign1 = int(bin_op1[0])
+    sign2 = int(bin_op2[0])
+    sign_res = int(bin_res[0])
+    overflow = (sign1 == sign2) and (sign1 != sign_res)
+    
+    # Format and display output
+    print(f"Operand 1: {op1_dec:3d} -> Binary: {bin_op1}")
+    print(f"Operand 2: {op2_dec:3d} -> Binary: {bin_op2}")
+    print("-" * 35)
+    print(f"Result    : {res_dec:3d} -> Binary: {bin_res}")
+    print(f"Arithmetic Overflow Detected: {overflow}")
+    print("=" * 35)
+
+# Verify the given expressions
+print("=== Verification of Expression a) (25 + (+18)) ===")
+binary_add_8bit(25, 18)
+
+print("\n=== Verification of Expression b) ((-25) + (-18)) ===")
+binary_add_8bit(-25, -18)
+
